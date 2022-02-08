@@ -1,20 +1,9 @@
-// const gameBoard = [
-//     [0, 0, 0, 0, 0, 0]
-// ];
-
 const gameBoard = [
     [1, 2, 3, 4, 5, 6, 7],
     [8, 9, 10, 11, 12, 13, 14],
     [1, 2, 3, 4, 5, 6, 7],
     [8, 9, 10, 11, 12, 13, 14]
 ];
-
-/**
- * Card: {
- *  number: 1,
- *  hidden: true
- * }
- */
 
 const gameArea = document.getElementById('gameArea');
 
@@ -154,20 +143,17 @@ function getCardProperties(value) {
 
 const cards = document.getElementsByClassName('card');
 
-let aCard, bCard = '';
-
 for (var i = 0; i < cards.length; i++) {
     cards[i].addEventListener('click', ($event) => {
         const hiddenCard = $event.currentTarget.getAttribute('data-hidden');
-        if (hiddenCard === 'true') {
+        if (hiddenCard === 'true' && !previousCard && !currentCard || hiddenCard === 'true' && !previousCard && currentCard || hiddenCard === 'true' && previousCard && !currentCard) {
             onClickCard($event);
         }
     });
 }
 
-
 let previousCard;
-
+let currentCard;
 let cardPairsFound = 0;
 
 function onClickCard($event) {
@@ -176,21 +162,22 @@ function onClickCard($event) {
     if (!previousCard) {
         previousCard = card;
     } else {
-        const match = verifyCards(previousCard.getAttribute('data-number'), card.getAttribute('data-number'));
+        currentCard = card;
+        const match = verifyCards(previousCard.getAttribute('data-number'), currentCard.getAttribute('data-number'));
         if (!match) {
             setTimeout(() => {
                 flipCard(previousCard);
-                flipCard(card);
+                flipCard(currentCard);
                 previousCard = null;
-            }, 3000);
+                currentCard = null;
+            }, 2500);
         } else {
             cardPairsFound++;
             document.getElementById('cardPairsFound').innerText = cardPairsFound;
             previousCard = null;
+            currentCard = null;
         }
     }
-    // setTimeout(() => {
-    // }, 3000);
 }
 
 function flipCard(card) {
