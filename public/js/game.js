@@ -176,6 +176,9 @@ function onClickCard($event) {
             document.getElementById('cardPairsFound').innerText = cardPairsFound;
             previousCard = null;
             currentCard = null;
+            if (cardPairsFound === 14) {
+                winGame();
+            }
         }
     }
 }
@@ -197,3 +200,18 @@ function verifyCards(aCard, bCard) {
     }
     return false;
 };
+
+function winGame() {
+    if (confirm('Vous avez gagné ! Recommencer ?')) {
+        cardPairsFound = 0;
+        document.getElementById('cardPairsFound').innerText = cardPairsFound;
+        for (var i = 0; i < cards.length; i++) {
+            // cards[i].setAttribute('data-hidden', true);
+            flipCard(cards[i]);
+        }
+    }
+}
+
+function loseGame() {
+
+}
