@@ -1,14 +1,57 @@
-<div class="container py-5">
-    <h1 class="display-6 text-center mb-5">Jeu de mémoire</h1>
+<div class="container">
+    <h1 class="text-center">Jeu de mémoire</h1>
 
-    <div class="d-flex flex-column">
-        <div class="mx-auto">
-            <div id="gameArea" class="bg-white p-3 d-flex flex-column"></div>
-            <div class="d-flex justify-content-between p-3">
-                <p>Temps restant: 3 minutes</p>
-                <p>Paires trouvées: <span id="cardPairsFound">0</span>/14</p>
+    <div id="launchGame">
+        <form class="mx-auto w-75" method="POST" action="/game">
+            <div class="form-group">
+                <label for="launchGamePseudoInput">Votre nom</label>
+                <input type="text" id="launchGamePseudoInput" placeholder="Ex: John DOE" class="form-control" name="pseudo">
+            </div>
+            <div class="d-flex">
+                <button type="submit" class="mx-auto">Jouer !</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="d-flex flex-column" id="scoreBoard">
+        <div class="d-flex justify-content-around">
+            <div class="podium-card d-flex flex-column">
+                <i class="fa-solid fa-star text-silver m-auto"></i>
+                <span class="m-auto">SuperGamer</span>
+            </div>
+            <div class="podium-card d-flex flex-column">
+                <i class="fa-solid fa-crown text-gold m-auto"></i>
+                <span class="m-auto">FastMonkey</span>
+            </div>
+            <div class="podium-card d-flex flex-column">
+                <i class="fa-solid fa-star text-bronze m-auto"></i>
+                <span class="m-auto">QuickMan</span>
             </div>
         </div>
+        <table>
+            <thead>
+                <th>Position</th>
+                <th>Score</th>
+                <th>Nom</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#1</td>
+                    <td>32 secondes</td>
+                    <td>SuperGamer</td>
+                </tr>
+                <tr>
+                    <td>#2</td>
+                    <td>32 secondes</td>
+                    <td>SuperGamer</td>
+                </tr>
+                <tr>
+                    <td>#2</td>
+                    <td>32 secondes</td>
+                    <td>SuperGamer</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 </div>

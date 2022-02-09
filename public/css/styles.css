@@ -1,25 +1,75 @@
-#gameArea {
-    perspective: 1000px;
+html, body {
+    font-family: sans-serif;
 }
 
-.card {
-    width: 80px;
-    height: 80px;
-    position: relative;
-    transition: transform 2s;
-    transform-style: preserve-3d;
+h1 {
+    font-weight: lighter;
+    font-size: 3.5rem;
+    margin-bottom: 3rem;
+}
+
+#launchGame {
+    background-color: #fff;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+#launchGame button {
+    padding: .75rem 1rem;
+    border-radius: 10px;
+    font-size: 16px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+#launchGame button:hover {
     cursor: pointer;
 }
 
-.front, .back {
-    position: absolute;
-    backface-visibility: hidden;
-    bottom: 0;
-    right: 0;
-    top: 0;
-    left: 0;
+#scoreBoard {
+    background-color: #fff;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 3rem;
 }
 
-.front {
-  transform: rotateY(180deg);
+.podium-card {
+    height: 100px;
+    width: 100px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.fa-crown {
+    font-size: 40px;
+}
+
+.fa-star {
+    font-size: 30px;
+}
+
+#scoreBoard table {
+    width: 100%;
+    margin-top: 3rem;
+}
+
+#scoreBoard table th {
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+#scoreBoard table tr {
+    text-align: center;
+}
+
+#scoreBoard table tr td {
+    border-top: 1px solid rgba(0, 0, 0, .125);
+    padding: 1rem 0;
+    text-align: center;
 }

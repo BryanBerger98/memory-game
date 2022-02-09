@@ -1,0 +1,76 @@
+#gameContainer {
+    padding: 1.5rem;
+}
+
+#gameArea {
+    perspective: 1000px;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+#gameScores {
+    padding: 1.5rem;
+}
+
+.card {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 10px;
+    margin: .25rem;
+    transition: transform 2s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.front, .back {
+    position: absolute;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0;
+}
+
+.front {
+  transform: rotateY(180deg);
+}
+
+#progressBar {
+    width: 100%;
+    background-color: #fff;
+    /* box-shadow: 0 .125rem .25rem rgba(#000, .075) !important; */
+    box-shadow: inset 0 5px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+}
+
+#bar {
+    width: 0;
+    border-radius: 50px;
+    height: 15px;
+    background-color: #0d6efd;
+}
+
+.alert {
+    position: relative;
+    padding: 1rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    display: none;
+}
+
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+.alert-fail {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}

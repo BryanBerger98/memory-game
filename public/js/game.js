@@ -1,4 +1,4 @@
-const gameBoard = [
+let gameBoard = [
     [1, 2, 3, 4, 5, 6, 7],
     [8, 9, 10, 11, 12, 13, 14],
     [1, 2, 3, 4, 5, 6, 7],
@@ -6,41 +6,149 @@ const gameBoard = [
 ];
 
 const gameArea = document.getElementById('gameArea');
+const cards = document.getElementsByClassName('card');
+const userPseudo = document.getElementById('pseudo').innerText;
 
-for (let i = 0; i < gameBoard.length; i++) {
-    const gameBoardLine = gameBoard[i];
-    const htmlLine = document.createElement('div');
-    htmlLine.className = 'd-flex'
-    gameArea.append(htmlLine);
-    for (let j = 0; j < gameBoardLine.length; j++) {
-        const cardNumber = gameBoardLine[j];
-        const cardProperties = this.getCardProperties(cardNumber);
 
-        // Card
-        const card = document.createElement('div');
-        card.setAttribute('data-number', cardNumber);
+let remainingTime = 1000 * 60 * 3;
+let elapsedTime = 0;
+let delay;
+
+let previousCard;
+let currentCard;
+let cardPairsFound = 0;
+
+generateGameBoard();
+startTimer();
+
+for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', ($event) => {
+        const hiddenCard = $event.currentTarget.getAttribute('data-hidden');
+        if (hiddenCard === 'true' && !previousCard && !currentCard || hiddenCard === 'true' && !previousCard && currentCard || hiddenCard === 'true' && previousCard && !currentCard) {
+            onClickCard($event);
+        }
+    });
+}
+
+function onClickCard($event) {
+    let card = $event.currentTarget;
+    flipCard(card);
+    if (!previousCard) {
+        previousCard = card;
+    } else {
+        currentCard = card;
+        const match = previousCard.getAttribute('data-number') === currentCard.getAttribute('data-number') ? true : false;
+        if (!match) {
+            setTimeout(() => {
+                flipCard(previousCard);
+                flipCard(currentCard);
+                previousCard = null;
+                currentCard = null;
+            }, 2500);
+        } else {
+            cardPairsFound++;
+            document.getElementById('cardPairsFound').innerText = cardPairsFound;
+            previousCard = null;
+            currentCard = null;
+            if (cardPairsFound === 14) {
+                winGame();
+            }
+        }
+    }
+}
+
+function flipCard(card) {
+    if (card.style.transform == "rotateY(180deg)") { // HIDE
         card.setAttribute('data-hidden', true);
-        card.classList = 'm-1 card';
+        card.style.transform = "rotateY(0deg)";
+    }
+    else { // SHOW
+        card.setAttribute('data-hidden', false);
+        card.style.transform = "rotateY(180deg)";
+    }
+}
 
-        // Front of the card
-        const cardFront = document.createElement('div');
-        cardFront.classList = 'd-flex front rounded';
-        cardFront.style.background = cardProperties.color;
-        const cardFrontIcon = document.createElement('i');
-        cardFrontIcon.classList = ` ${cardProperties.icon} m-auto text-white`;
-        cardFrontIcon.style.fontSize = '50px';
-        cardFront.append(cardFrontIcon);
-        card.append(cardFront);
+function generateGameBoard() {
+    const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+    for (let i = 0; i < values.length; i++) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = values[i];
+        values[i] = values[j];
+        values[j] = temp;
+    }
+    const board = splitArray(values, 7);
+    // gameBoard = board;
+    gameBoard = [
+        [1, 2, 3, 4, 5, 6, 7],
+        [8, 9, 10, 11, 12, 13, 14],
+        [1, 2, 3, 4, 5, 6, 7],
+        [8, 9, 10, 11, 12, 13, 14]
+    ];;
+    for (let i = 0; i < gameBoard.length; i++) {
+        const gameBoardLine = gameBoard[i];
+        const htmlLine = document.createElement('div');
+        htmlLine.className = 'd-flex'
+        gameArea.append(htmlLine);
+        for (let j = 0; j < gameBoardLine.length; j++) {
+            const cardNumber = gameBoardLine[j];
+            const cardProperties = this.getCardProperties(cardNumber);
+    
+            // Card
+            const card = document.createElement('div');
+            card.setAttribute('data-number', cardNumber);
+            card.setAttribute('data-hidden', true);
+            card.classList = 'card';
+    
+            // Front of the card
+            const cardFront = document.createElement('div');
+            cardFront.classList = 'd-flex front';
+            cardFront.style.background = cardProperties.color;
+            const cardFrontIcon = document.createElement('i');
+            cardFrontIcon.classList = ` ${cardProperties.icon} m-auto text-white`;
+            cardFrontIcon.style.fontSize = '50px';
+            cardFront.append(cardFrontIcon);
+            card.append(cardFront);
+    
+            // Back of the card
+            const cardBack = document.createElement('div');
+            cardBack.classList = 'd-flex bg-dark back';
+            const cardBackIcon = document.createElement('i');
+            cardBackIcon.classList = 'fas fa-code m-auto text-white';
+            cardBack.append(cardBackIcon);
+            card.append(cardBack);
+    
+            htmlLine.append(card);
+        }
+    }
+}
 
-        // Back of the card
-        const cardBack = document.createElement('div');
-        cardBack.classList = 'd-flex bg-dark back rounded';
-        const cardBackIcon = document.createElement('i');
-        cardBackIcon.classList = 'fas fa-code m-auto text-white';
-        cardBack.append(cardBackIcon);
-        card.append(cardBack);
+function splitArray(myArray, chunkSize){
+    const arrayLength = myArray.length;
+    const tempArray = [];
+    
+    for (let i = 0; i < arrayLength; i += chunkSize) {
+        myChunk = myArray.slice(i, i+chunkSize);
+        tempArray.push(myChunk);
+    }
+    return tempArray;
+}
 
-        htmlLine.append(card);
+function startTimer() {
+    if (remainingTime === 0) {
+        remainingTime = 1000 * 60 * 3;
+        progress = 0;
+    }
+    if (remainingTime !== 0) {
+        delay = setInterval(() => {
+            if (elapsedTime === remainingTime) {
+                clearInterval(delay);
+                loseGame();
+                return;
+            }
+            elapsedTime += 10;
+            const progressPercentage = (elapsedTime / remainingTime) * 100;
+            document.getElementById('bar').style.width = `${progressPercentage}%`;
+        }, 10);
     }
 }
 
@@ -141,77 +249,49 @@ function getCardProperties(value) {
     return iconProperties;
 }
 
-const cards = document.getElementsByClassName('card');
-
-for (var i = 0; i < cards.length; i++) {
-    cards[i].addEventListener('click', ($event) => {
-        const hiddenCard = $event.currentTarget.getAttribute('data-hidden');
-        if (hiddenCard === 'true' && !previousCard && !currentCard || hiddenCard === 'true' && !previousCard && currentCard || hiddenCard === 'true' && previousCard && !currentCard) {
-            onClickCard($event);
-        }
-    });
-}
-
-let previousCard;
-let currentCard;
-let cardPairsFound = 0;
-
-function onClickCard($event) {
-    let card = $event.currentTarget;
-    flipCard(card);
-    if (!previousCard) {
-        previousCard = card;
-    } else {
-        currentCard = card;
-        const match = verifyCards(previousCard.getAttribute('data-number'), currentCard.getAttribute('data-number'));
-        if (!match) {
-            setTimeout(() => {
-                flipCard(previousCard);
-                flipCard(currentCard);
-                previousCard = null;
-                currentCard = null;
-            }, 2500);
-        } else {
-            cardPairsFound++;
-            document.getElementById('cardPairsFound').innerText = cardPairsFound;
-            previousCard = null;
-            currentCard = null;
-            if (cardPairsFound === 14) {
-                winGame();
-            }
-        }
-    }
-}
-
-function flipCard(card) {
-    if (card.style.transform == "rotateY(180deg)") { // HIDE
-        card.setAttribute('data-hidden', true);
-        card.style.transform = "rotateY(0deg)";
-    }
-    else { // SHOW
-        card.setAttribute('data-hidden', false);
-        card.style.transform = "rotateY(180deg)";
-    }
-}
-
-function verifyCards(aCard, bCard) {
-    if (aCard === bCard) {
-        return true;
-    }
-    return false;
-};
-
 function winGame() {
-    if (confirm('Vous avez gagné ! Recommencer ?')) {
-        cardPairsFound = 0;
-        document.getElementById('cardPairsFound').innerText = cardPairsFound;
-        for (var i = 0; i < cards.length; i++) {
-            // cards[i].setAttribute('data-hidden', true);
-            flipCard(cards[i]);
+    document.getElementById('alert-success').style.display = 'block';
+    clearInterval(delay);
+    const gameData = {
+        user: {
+            pseudo: userPseudo
+        },
+        game: {
+            time: elapsedTime,
+            cardPairsFound: cardPairsFound,
+            success: true
         }
-    }
+    };
+    sendRequest('POST', '/game/save', gameData)
+    .then(res => {
+        console.log(res);
+
+        // cardPairsFound = 0;
+        // document.getElementById('cardPairsFound').innerText = cardPairsFound;
+        // for (var i = 0; i < cards.length; i++) {
+        //     flipCard(cards[i]);
+        // }
+    })
+    .catch(console.error);
 }
 
 function loseGame() {
+    alert('Vous avez perdu !');
+}
 
+function sendRequest(method, path, body) {
+    return new Promise((resolve, reject) => {
+        var http = new XMLHttpRequest();
+        http.open(method, path, true);
+        http.setRequestHeader('Content-type', 'application/json');
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                resolve(http.response);
+            }
+            if (http.readyState === 4 && http.status === 500) {
+                reject(http.response);
+            }
+        }
+        http.send(JSON.stringify(body));
+    });
 }

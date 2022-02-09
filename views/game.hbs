@@ -1,0 +1,26 @@
+<div class="container">
+    {{#if pseudo}}
+        <h1 class="text-center">À toi de jouer <span id="pseudo">{{ pseudo }}</span>!</h1>
+    {{else}}
+        <h1 class="text-center">Jeu de mémoire</h1>
+    {{/if}}
+
+    <div class="d-flex flex-column">
+        <div class="mx-auto" id="gameContainer">
+            <div class="alert alert-success" id="alert-success">
+                Vous avez gagné !
+            </div>
+            <div id="gameArea" class="bg-white d-flex flex-column"></div>
+            <div id="gameScores" class="d-flex justify-content-between">
+                {{!-- <p>Temps restant: <span id="remainingTime"></span></p> --}}
+                <p>Paires trouvées: <span id="cardPairsFound">0</span>/14</p>
+            </div>
+            <div id="progressBar">
+                <div id="bar"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/game.js" defer></script>

@@ -6,7 +6,13 @@ require('dotenv').config();
 const { PORT } = process.env;
 const expressHbs = require('express-handlebars');
 const path = require('path');
+const cors = require('cors');
 const homeRoutes = require('./routes/home.routes');
+const gameRoutes = require('./routes/game.routes');
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 app.engine('hbs', expressHbs.engine({
     defaultLayout: 'main',
@@ -22,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'node_modules/@fortawesome/fontaweso
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(homeRoutes);
+app.use(gameRoutes);
 
 server.listen(PORT, () => {
     console.log(`NodeJS server started on port ${PORT}`)
