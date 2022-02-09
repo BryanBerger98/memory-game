@@ -66,6 +66,18 @@
     text-align: right;
 }
 
+.fw-bold {
+    font-weight: bold;
+}
+
+.fw-normal {
+    font-weight: normal;
+}
+
+.fw-lighter {
+    font-weight: lighter;
+}
+
 /* --- COLORS --- */
 
 .bg-white {

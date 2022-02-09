@@ -18,8 +18,11 @@ app.use(express.urlencoded({extended: false}));
 app.engine('hbs', expressHbs.engine({
     defaultLayout: 'main',
     extname: '.hbs',
-    layoutsDir: path.join(__dirname, 'views/layouts')
+    layoutsDir: path.join(__dirname, 'views/layouts'),
+    helpers: require('./helpers/handlebars.helpers')
 }));
+
+
 
 app.set('view engine', 'hbs');
 app.set('views', 'views');
@@ -30,6 +33,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(homeRoutes);
 app.use(gameRoutes);
+
+app.use('/', (req, res) => {
+    res.redirect('/home');
+});
 
 mongoose.connect(
     MONGODB_URI,
