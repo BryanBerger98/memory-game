@@ -189,24 +189,6 @@ function generateGameBoard() {
 }
 
 /**
- * Fonction permettant de créer des tronçons d'un tableau
- * @param {Array} myArray tableau à diviser en tronçons
- * @param {Number} chunkSize Taille des tronçons
- * @returns {Array} splittedArray => Tableau contenant les tronçons
- */
-function splitArray(myArray, chunkSize){
-    const arrayLength = myArray.length;
-    const splittedArray = [];
-    
-    for (let i = 0; i < arrayLength; i += chunkSize) {
-        myChunk = myArray.slice(i, i+chunkSize);
-        splittedArray.push(myChunk);
-    }
-    return splittedArray;
-}
-
-
-/**
  * Fonction permettant de démarrer l'horloge
  * i. La fonction 'setInterval' permet d'éxécuter le code qu'elle contient à chaque interval de temps défini. Ici, toutes les 10 millisecondes (ms).
  * Pourquoi 10 ms ? Pour donner un aspect "fluide" à la barre de progression affichée sur la vue. Plus la fréquence de mise à jour de la barre de progression est élevée, moins son évolution aura l'air sacadé.
@@ -237,11 +219,102 @@ function startTimer() {
 }
 
 /**
+ * Fonction exécutant le processus de gain du jeu
+ */
+function winGame() {
+    // Arrêt de l'horloge
+    clearInterval(timer);
+
+    // Fin du jeu
+    gameOver = true;
+
+    // Récupération du temps écoulé pendant le jeu sous la forme {minutes, seconds} pour l'affichage
+    const time = msToMS(elapsedTime);
+
+    // Création de l'objet 'gameData' à envoyer au backend pour enregistrement en base de données
+    const gameData = {
+        user: {
+            pseudo: userPseudo
+        },
+        game: {
+            time: elapsedTime,
+            card_pairs_found: cardPairsFound,
+            success: true
+        }
+    };
+
+    // Envoi d'une requête POST permettant l'enregistrement des données du jeu
+    sendRequest('POST', '/game/save', gameData)
+    .then(res => {
+        // Affichage du message de réussite et du bouton permettant de relancer le jeu
+        alertSuccess.innerText = `Vous avez gagné en ${time.minutes ? time.minutes + 'minutes et' : ''} ${time.seconds} secondes !`;
+        alertSuccess.style.display = 'block';
+        restartButton.style.display = 'block';
+    })
+    .catch(console.error);
+}
+
+/**
+ * Fonction permettant d'exécuter le processus de perte du jeu
+ */
+function loseGame() {
+    // Arrêt de l'horloge
+    clearInterval(timer);
+
+    // Fin du jeu
+    gameOver = true
+    
+    // Création de l'objet 'gameData' à envoyer au backend pour enregistrement en base de données
+    const gameData = {
+        user: {
+            pseudo: userPseudo
+        },
+        game: {
+            time: elapsedTime,
+            card_pairs_found: cardPairsFound,
+            success: false
+        }
+    };
+
+    // Envoi d'une requête POST permettant l'enregistrement des données du jeu
+    sendRequest('POST', '/game/save', gameData)
+    .then(res => {
+
+        // Affichage du message d'échec et du bouton permettant de relancer le jeu
+        alertFail.style.display = 'block';
+        restartButton.style.display = 'block';
+    })
+    .catch(console.error);
+}
+
+/**
+ * Fonction de remise à zéro du jeu
+ */
+function restartGame() {
+    // Le jeu n'est plus terminé
+    gameOver = false;
+    // Le temps écoulé est remis à zéro
+    elapsedTime = 0;
+    // Les paires trouvées sont remises à zéro
+    cardPairsFound = 0;
+
+    // Les messages de réussite ou d'échec ainsi que le bouton de "restart" sont masqués
+    alertSuccess.style.display = 'none';
+    alertFail.style.display = 'none';
+    restartButton.style.display = 'none';
+
+    // Un nouveau plateau est généré
+    generateGameBoard();
+    // L'horloge redémarre
+    startTimer();
+}
+
+/**
  * Permet de récupérer, d'après le numéro de la carte passé en argument, l'icône et la couleur à afficher sur la carte en question
  * @param {Number} value 
  * @returns {Object} iconProperties => Contient l'icône et la couleur à afficher sur la carte
  */
-function getCardProperties(value) {
+ function getCardProperties(value) {
     let iconProperties = {
         icon: '',
         color: ''
@@ -338,73 +411,44 @@ function getCardProperties(value) {
     return iconProperties;
 }
 
+
+
+
+
+/* --- FONCTIONS HELPERS --- */
+
+
 /**
- * Fonction exécutant le processus de gain du jeu
+ * Fonction permettant de créer des tronçons d'un tableau
+ * @param {Array} myArray tableau à diviser en tronçons
+ * @param {Number} chunkSize Taille des tronçons
+ * @returns {Array} splittedArray => Tableau contenant les tronçons
  */
-function winGame() {
-    // Arrêt de l'horloge
-    clearInterval(timer);
-
-    // Fin du jeu
-    gameOver = true;
-
-    // Récupération du temps écoulé pendant le jeu sous la forme {minutes, seconds} pour l'affichage
-    const time = msToMS(elapsedTime);
-
-    // Création de l'objet 'gameData' à envoyer au backend pour enregistrement en base de données
-    const gameData = {
-        user: {
-            pseudo: userPseudo
-        },
-        game: {
-            time: elapsedTime,
-            card_pairs_found: cardPairsFound,
-            success: true
-        }
-    };
-
-    // Envoi d'une requête POST permettant l'enregistrement des données du jeu
-    sendRequest('POST', '/game/save', gameData)
-    .then(res => {
-        // Affichage du message de réussite et du bouton permettant de relancer le jeu
-        alertSuccess.innerText = `Vous avez gagné en ${time.minutes ? time.minutes + 'minutes et' : ''} ${time.seconds} secondes !`;
-        alertSuccess.style.display = 'block';
-        restartButton.style.display = 'block';
-    })
-    .catch(console.error);
+ function splitArray(myArray, chunkSize){
+    const arrayLength = myArray.length;
+    const splittedArray = [];
+    
+    for (let i = 0; i < arrayLength; i += chunkSize) {
+        myChunk = myArray.slice(i, i+chunkSize);
+        splittedArray.push(myChunk);
+    }
+    return splittedArray;
 }
 
 /**
- * Fonction permettant d'exécuter le processus de perte du jeu
+ * Fonction de conversion des millisecondes en objet donnant les minutes et les secondes
+ * @param {Number} ms 
+ * @returns {Object}
  */
-function loseGame() {
-    // Arrêt de l'horloge
-    clearInterval(timer);
+ function msToMS(ms) {
+    // Conversion des millisecondes en secondes
+    let seconds = ms / 1000;
+    // Récupération des minutes
+    const minutes = parseInt( seconds / 60 );
+    // Récupération des secondes qui n'ont pas été converties en minutes
+    seconds = seconds % 60;
 
-    // Fin du jeu
-    gameOver = true
-    
-    // Création de l'objet 'gameData' à envoyer au backend pour enregistrement en base de données
-    const gameData = {
-        user: {
-            pseudo: userPseudo
-        },
-        game: {
-            time: elapsedTime,
-            card_pairs_found: cardPairsFound,
-            success: false
-        }
-    };
-
-    // Envoi d'une requête POST permettant l'enregistrement des données du jeu
-    sendRequest('POST', '/game/save', gameData)
-    .then(res => {
-
-        // Affichage du message d'échec et du bouton permettant de relancer le jeu
-        alertFail.style.display = 'block';
-        restartButton.style.display = 'block';
-    })
-    .catch(console.error);
+    return {minutes, seconds: seconds.toFixed()}; // 'toFixed' permet, ici, de renvoyer un nombre entier
 }
 
 /**
@@ -414,7 +458,7 @@ function loseGame() {
  * @param {Object} body // Corps de la requête, données à envoyer
  * @returns {Promise} // La fonction est une Promise. Cela permet de gérer l'exécution de la requête de manière asynchrone. Voir: https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Promise
  */
-function sendRequest(method, path, body) {
+ function sendRequest(method, path, body) {
     return new Promise((resolve, reject) => {
         var http = new XMLHttpRequest();
         http.open(method, path, true);
@@ -436,42 +480,3 @@ function sendRequest(method, path, body) {
         http.send(JSON.stringify(body)); // Envoi de la requête contenant les données à transmettre au back sous la forme d'un objet JSON "stringifié" (transformé en chaîne de caractères)
     });
 }
-
-/**
- * Fonction de conversion des millisecondes en objet donnant les minutes et les secondes
- * @param {Number} ms 
- * @returns {Object}
- */
-function msToMS(ms) {
-    // Conversion des millisecondes en secondes
-    let seconds = ms / 1000;
-    // Récupération des minutes
-    const minutes = parseInt( seconds / 60 );
-    // Récupération des secondes qui n'ont pas été converties en minutes
-    seconds = seconds % 60;
-
-    return {minutes, seconds: seconds.toFixed()}; // 'toFixed' permet, ici, de renvoyer un nombre entier
-}
-
-/**
- * Fonction de remise à zéro du jeu
- */
-function restartGame() {
-    // Le jeu n'est plus terminé
-    gameOver = false;
-    // Le temps écoulé est remis à zéro
-    elapsedTime = 0;
-    // Les paires trouvées sont remises à zéro
-    cardPairsFound = 0;
-
-    // Les messages de réussite ou d'échec ainsi que le bouton de "restart" sont masqués
-    alertSuccess.style.display = 'none';
-    alertFail.style.display = 'none';
-    restartButton.style.display = 'none';
-
-    // Un nouveau plateau est généré
-    generateGameBoard();
-    // L'horloge redémarre
-    startTimer();
-}
-
