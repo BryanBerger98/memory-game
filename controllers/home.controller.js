@@ -24,5 +24,5 @@ function msToMS(ms) {
     const minutes = parseInt( seconds / 60 );
     // 4- Keep only seconds not extracted to minutes:
     seconds = seconds % 60;
-    return {minutes, seconds};
+    return {minutes, seconds: seconds.toFixed()};
 }
