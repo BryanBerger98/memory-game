@@ -5,10 +5,12 @@ let gameBoard = [
     [8, 9, 10, 11, 12, 13, 14]
 ];
 
-const gameArea = document.getElementById('gameArea');
-const cards = document.getElementsByClassName('card');
 const userPseudo = document.getElementById('pseudo').innerText;
-
+const gameArea = document.getElementById('gameArea');
+const alertSuccess = document.getElementById('alertSuccess');
+const alertFail = document.getElementById('alertFail');
+const restartButton = document.getElementById('restartButton');
+restartButton.addEventListener('click', restartGame);
 
 let remainingTime = 1000 * 60 * 3;
 let elapsedTime = 0;
@@ -17,18 +19,12 @@ let delay;
 let previousCard;
 let currentCard;
 let cardPairsFound = 0;
+let gameOver = false;
 
 generateGameBoard();
 startTimer();
 
-for (var i = 0; i < cards.length; i++) {
-    cards[i].addEventListener('click', ($event) => {
-        const hiddenCard = $event.currentTarget.getAttribute('data-hidden');
-        if (hiddenCard === 'true' && !previousCard && !currentCard || hiddenCard === 'true' && !previousCard && currentCard || hiddenCard === 'true' && previousCard && !currentCard) {
-            onClickCard($event);
-        }
-    });
-}
+
 
 function onClickCard($event) {
     let card = $event.currentTarget;
@@ -77,13 +73,8 @@ function generateGameBoard() {
         values[j] = temp;
     }
     const board = splitArray(values, 7);
-    // gameBoard = board;
-    gameBoard = [
-        [1, 2, 3, 4, 5, 6, 7],
-        [8, 9, 10, 11, 12, 13, 14],
-        [1, 2, 3, 4, 5, 6, 7],
-        [8, 9, 10, 11, 12, 13, 14]
-    ];;
+    gameBoard = board;
+    gameArea.innerHTML = '';
     for (let i = 0; i < gameBoard.length; i++) {
         const gameBoardLine = gameBoard[i];
         const htmlLine = document.createElement('div');
@@ -120,6 +111,17 @@ function generateGameBoard() {
             htmlLine.append(card);
         }
     }
+    const cards = document.getElementsByClassName('card');
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].addEventListener('click', ($event) => {
+            const hiddenCard = $event.currentTarget.getAttribute('data-hidden');
+            if (!gameOver) {
+                if (hiddenCard === 'true' && !previousCard && !currentCard || hiddenCard === 'true' && !previousCard && currentCard || hiddenCard === 'true' && previousCard && !currentCard) {
+                    onClickCard($event);
+                }
+            }
+        });
+    }
 }
 
 function splitArray(myArray, chunkSize){
@@ -134,22 +136,16 @@ function splitArray(myArray, chunkSize){
 }
 
 function startTimer() {
-    if (remainingTime === 0) {
-        remainingTime = 1000 * 60 * 3;
-        progress = 0;
-    }
-    if (remainingTime !== 0) {
-        delay = setInterval(() => {
-            if (elapsedTime === remainingTime) {
-                clearInterval(delay);
-                loseGame();
-                return;
-            }
-            elapsedTime += 10;
-            const progressPercentage = (elapsedTime / remainingTime) * 100;
-            document.getElementById('bar').style.width = `${progressPercentage}%`;
-        }, 10);
-    }
+    delay = setInterval(() => {
+        if (elapsedTime === remainingTime) {
+            clearInterval(delay);
+            loseGame();
+            return;
+        }
+        elapsedTime += 10;
+        const progressPercentage = (elapsedTime / remainingTime) * 100;
+        document.getElementById('bar').style.width = `${progressPercentage}%`;
+    }, 10);
 }
 
 function getCardProperties(value) {
@@ -250,33 +246,48 @@ function getCardProperties(value) {
 }
 
 function winGame() {
-    document.getElementById('alert-success').style.display = 'block';
     clearInterval(delay);
+    gameOver = true;
+    const time = msToMS(elapsedTime);
     const gameData = {
         user: {
             pseudo: userPseudo
         },
         game: {
             time: elapsedTime,
-            cardPairsFound: cardPairsFound,
+            card_pairs_found: cardPairsFound,
             success: true
         }
     };
     sendRequest('POST', '/game/save', gameData)
     .then(res => {
-        console.log(res);
-
-        // cardPairsFound = 0;
-        // document.getElementById('cardPairsFound').innerText = cardPairsFound;
-        // for (var i = 0; i < cards.length; i++) {
-        //     flipCard(cards[i]);
-        // }
+        alertSuccess.innerText = `Vous avez gagné en ${time.minutes ? time.minutes + 'minutes et' : ''} ${time.seconds} secondes !`;
+        alertSuccess.style.display = 'block';
+        restartButton.style.display = 'block';
     })
     .catch(console.error);
 }
 
 function loseGame() {
-    alert('Vous avez perdu !');
+    clearInterval(delay);
+    gameOver = true
+    const time = msToMS(elapsedTime);
+    const gameData = {
+        user: {
+            pseudo: userPseudo
+        },
+        game: {
+            time: elapsedTime,
+            card_pairs_found: cardPairsFound,
+            success: false
+        }
+    };
+    sendRequest('POST', '/game/save', gameData)
+    .then(res => {
+        alertFail.style.display = 'block';
+        restartButton.style.display = 'block';
+    })
+    .catch(console.error);
 }
 
 function sendRequest(method, path, body) {
@@ -295,3 +306,25 @@ function sendRequest(method, path, body) {
         http.send(JSON.stringify(body));
     });
 }
+
+function msToMS(ms) {
+    // 1- Convert to seconds:
+    let seconds = ms / 1000;
+    // 3- Extract minutes:
+    const minutes = parseInt( seconds / 60 );
+    // 4- Keep only seconds not extracted to minutes:
+    seconds = seconds % 60;
+    return {minutes, seconds};
+}
+
+function restartGame() {
+    gameOver = false;
+    elapsedTime = 0;
+    cardPairsFound = 0;
+    alertSuccess.style.display = 'none';
+    alertFail.style.display = 'none';
+    restartButton.style.display = 'none';
+    generateGameBoard();
+    startTimer();
+}
+

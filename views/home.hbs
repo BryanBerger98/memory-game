@@ -14,19 +14,23 @@
     </div>
 
     <div class="d-flex flex-column" id="scoreBoard">
+        <h2 class="text-center">Podium</h2>
         <div class="d-flex justify-content-around">
-            <div class="podium-card d-flex flex-column">
-                <i class="fa-solid fa-star text-silver m-auto"></i>
-                <span class="m-auto">SuperGamer</span>
-            </div>
-            <div class="podium-card d-flex flex-column">
-                <i class="fa-solid fa-crown text-gold m-auto"></i>
-                <span class="m-auto">FastMonkey</span>
-            </div>
-            <div class="podium-card d-flex flex-column">
-                <i class="fa-solid fa-star text-bronze m-auto"></i>
-                <span class="m-auto">QuickMan</span>
-            </div>
+
+            {{#each games}}
+                <div class="podium-card d-flex flex-column">
+                    <i class="fa-solid fa-star text-silver m-auto"></i>
+                    <span class="m-auto">{{ user.pseudo }}</span>
+                </div>
+                {{!-- <div class="podium-card d-flex flex-column">
+                    <i class="fa-solid fa-star text-silver m-auto"></i>
+                    <span class="m-auto">{{ user.pseudo }}</span>
+                </div>
+                <div class="podium-card d-flex flex-column">
+                    <i class="fa-solid fa-star text-silver m-auto"></i>
+                    <span class="m-auto">{{ user.pseudo }}</span>
+                </div> --}}
+            {{/each}}
         </div>
         <table>
             <thead>
@@ -35,21 +39,15 @@
                 <th>Nom</th>
             </thead>
             <tbody>
-                <tr>
-                    <td>#1</td>
-                    <td>32 secondes</td>
-                    <td>SuperGamer</td>
-                </tr>
-                <tr>
-                    <td>#2</td>
-                    <td>32 secondes</td>
-                    <td>SuperGamer</td>
-                </tr>
-                <tr>
-                    <td>#2</td>
-                    <td>32 secondes</td>
-                    <td>SuperGamer</td>
-                </tr>
+                {{#each games}}
+
+                    <tr>
+                        <td>#{{@index}}</td>
+                        <td>{{this}}</td>
+                        <td>{{this.time}}</td>
+                    </tr>
+
+                {{/each}}
             </tbody>
         </table>
     </div>

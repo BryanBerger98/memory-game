@@ -1,4 +1,5 @@
 <div class="container">
+    <a href="/home" class="back-button">Retour</a>
     {{#if pseudo}}
         <h1 class="text-center">À toi de jouer <span id="pseudo">{{ pseudo }}</span>!</h1>
     {{else}}
@@ -7,8 +8,13 @@
 
     <div class="d-flex flex-column">
         <div class="mx-auto" id="gameContainer">
-            <div class="alert alert-success" id="alert-success">
-                Vous avez gagné !
+            <div class="d-flex">
+                 <div class="alert alert-success w-100" id="alertSuccess">
+                </div>
+                <div class="alert alert-fail w-100" id="alertFail">
+                    Temps écoulé !
+                </div>
+                <button type="button" id="restartButton">Rejouer</button>
             </div>
             <div id="gameArea" class="bg-white d-flex flex-column"></div>
             <div id="gameScores" class="d-flex justify-content-between">

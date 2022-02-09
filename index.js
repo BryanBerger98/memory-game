@@ -3,10 +3,11 @@ const express = require('express');
 const app = express();
 const server = http.createServer(app);
 require('dotenv').config();
-const { PORT } = process.env;
+const { PORT, MONGODB_URI } = process.env;
 const expressHbs = require('express-handlebars');
 const path = require('path');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const homeRoutes = require('./routes/home.routes');
 const gameRoutes = require('./routes/game.routes');
 
@@ -30,6 +31,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(homeRoutes);
 app.use(gameRoutes);
 
+mongoose.connect(
+    MONGODB_URI,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+)
+.then(() => {
+    console.log('MongoDB connected successfully');
+}).catch(error => {
+    console.error(error);
+    process.exit(1);
+})
+
 server.listen(PORT, () => {
-    console.log(`NodeJS server started on port ${PORT}`)
+    console.log(`NodeJS server started on port ${PORT}`);
 });

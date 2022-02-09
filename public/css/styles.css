@@ -73,3 +73,13 @@ h1 {
     padding: 1rem 0;
     text-align: center;
 }
+
+.back-button {
+    padding: .75rem 1rem;
+    border-radius: 5px;
+    font-size: 16px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    color: #212529;
+    margin: 0 0 1rem .75rem;
+    text-decoration: none;
+}
