@@ -62,6 +62,6 @@ mongoose.connect(MONGODB_URI)
 })
 
 // Démarrage du serveur
-server.listen(PORT, () => {
-    console.log(`NodeJS server started on port ${PORT}`);
+server.listen(PORT || 8000, () => {
+    console.log(`NodeJS server started on port ${PORT || 8000}`);
 });
