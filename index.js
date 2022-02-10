@@ -39,7 +39,7 @@ app.set('view engine', 'hbs');
 app.set('views', 'views');
 
 // Dossiers à envoyer côté frontend. Le dossier 'fontawesome' qui contient toutes les icônes et le dossier 'public' qui contient le CSS et le JavaScript du frontend.
-app.use(express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-pro/js')));
+app.use(express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/js')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Utilisation des routes de l'API importées plus haut
@@ -53,7 +53,6 @@ app.use('/', (req, res) => {
 
 
 // Connexion à MongoDB
-console.log(MONGODB_URI);
 mongoose.connect(MONGODB_URI)
 .then(() => {
     console.log('MongoDB connected successfully');
