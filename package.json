@@ -16,5 +16,8 @@
     "express": "^4.17.2",
     "express-handlebars": "^6.0.2",
     "mongoose": "^6.2.1"
+  },
+  "engines": {
+    "node": "14.18.1"
   }
 }
