@@ -22,8 +22,6 @@ app.engine('hbs', expressHbs.engine({
     helpers: require('./helpers/handlebars.helpers')
 }));
 
-
-
 app.set('view engine', 'hbs');
 app.set('views', 'views');
 

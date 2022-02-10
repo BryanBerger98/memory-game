@@ -1,13 +1,20 @@
 <div class="container">
+
+    {{!-- Bouton retour --}}
     <a href="/home" class="back-button">Retour</a>
+
+    {{!-- Si le "pseudo" existe alors on affiche une phrase personnalisée --}}
     {{#if pseudo}}
         <h1 class="text-center">À toi de jouer <span id="pseudo">{{ pseudo }}</span>!</h1>
     {{else}}
         <h1 class="text-center">Jeu de mémoire</h1>
     {{/if}}
 
+
     <div class="d-flex flex-column">
         <div class="mx-auto" id="gameContainer">
+
+            {{!-- Bloc d'alertes --}}
             <div class="d-flex">
                  <div class="alert alert-success w-100" id="alertSuccess">
                 </div>
@@ -16,17 +23,24 @@
                 </div>
                 <button type="button" id="restartButton">Rejouer</button>
             </div>
+
+            {{!-- Zone de jeu | Le plateau contenant les carte apparaitera dans cette div --}}
             <div id="gameArea" class="bg-white d-flex flex-column"></div>
+
+            {{!-- Bloc indiquant le nombre de paires trouvées --}}
             <div id="gameScores" class="d-flex justify-content-between">
-                {{!-- <p>Temps restant: <span id="remainingTime"></span></p> --}}
                 <p>Paires trouvées: <span id="cardPairsFound">0</span>/14</p>
             </div>
+
+            {{!-- Barre de progression du temps --}}
             <div id="progressBar">
                 <div id="bar"></div>
             </div>
+
         </div>
     </div>
 
 </div>
 
+{{!-- Import de game.js --}}
 <script src="js/game.js" defer></script>
