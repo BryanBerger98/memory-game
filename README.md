@@ -1,6 +1,6 @@
 # Memory Game
 
-⬇️ Pour jouer c'est par ici ⬇️
+Pour jouer c'est par **ici** ➡️ 
 https://memory-code-game.herokuapp.com/home
 
 Technologies principales utilisées:
